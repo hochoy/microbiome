@@ -1,0 +1,5 @@
+fastq/
+fastq_gz/
+silva/
+.Rapp.history
+.DS_Store
