@@ -199,19 +199,30 @@ plot_bar(ps.top20, x="grp_id", fill="Family") + facet_wrap(~grp_id, scales="free
 # Deseq2
 # http://joey711.github.io/phyloseq-extensions/DESeq2.html
 # deseq2_data <- phyloseq_to_deseq2(ps, ~ diet + phase + diet:phase)
-deseq2_data <- phyloseq_to_deseq2(ps, ~ diet + phase + diet:phase)
+
+# DESeq2 uses factor levels to determine which factor level is the "control" group. 
+# so, remember to assign the control factor as first (switch it around to compare different groups)
+# https://www.biostars.org/p/211246/
+# dds$phase <- factor("Pre","Post") # Pre is the control here
+# dds$diet <- factor("LF","HF","EEN") # LF is the control here
+# design(dds) <- ~ diet + phase + diet:phase
+# dds <- DESeq(dds)
+
+deseq2_data <- phyloseq_to_deseq2(ps, ~0 + diet + phase + diet:phase)
 deseq2_data <- DESeq(deseq2_data, test="Wald", fitType = "parametric")
 
 # view results
+# https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-015-0794-7
 resultsNames(deseq2_data)
 # res = results(deseq2_data,
 #               contrast = c("diet","EEN","HF"),
 #               cooksCutoff = FALSE)
-res <- results(deseq2_data,contrast = c("diet","HF","LF"))
+# res <- results(deseq2_data,contrast = c("diet","HF","LF"))
 # res <- results(deseq2_data,contrast = c("diet","EEN","LF"))
 # res <- results(deseq2_data,contrast = c("diet","HF","LF"))
 # res <- results(deseq2_data,contrast = c("diet","EEN","HF"))
 # res <- results(deseq2_data,contrast = c("phase","Post","Pre"))
+res <- results(deseq2_data, name = "dietLF.phasePre")
 res
 alpha = 0.01
 sigtab = res[which(res$padj < alpha), ]
@@ -234,3 +245,4 @@ x = sort(x, TRUE)
 sigtab$Genus = factor(as.character(sigtab$Genus), levels=names(x))
 ggplot(sigtab, aes(x=Genus, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
+
