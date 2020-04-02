@@ -32,4 +32,5 @@ Steps 7 to 8 are common plots showing the distribution of taxonomic groups, and 
 
 Step 9 or Ordination allows us to reduce a high-dimensional dataset into a low dimensional dataset (2D graph) for easier human visualization. 
 
-Step 10 I am not an expert on the DESeq2 method, but in simple terms, DESeq2 attempts to fit our data onto a negative binomial curve and detect any significant variances from the curve.
+Step 10 I am not an expert on the DESeq2 method, but in simple terms, DESeq2 attempts to fit our data onto a negative binomial curve based on the experimental design (variables + interaction terms) and determine if any of the model's coefficients are statistically different from zero; i.e. are statistically different between groups, and can be used to differentiate them.
+
